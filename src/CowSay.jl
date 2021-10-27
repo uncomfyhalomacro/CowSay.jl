@@ -287,7 +287,12 @@ const CREATURES = Dict(
 """
 )
 
-### Logic
+
+"""
+    bubble(msg_v::Vector)
+
+Creates a message bubble.
+"""
 function bubble(msg_v::Vector)
     result = []
     if length(msg_v) == 1
@@ -314,13 +319,23 @@ function bubble(msg_v::Vector)
     end
 end
 
+"""
+    creature_combine_bubble(bubble::String, creature::String)
+
+Combine message bubble and ascii art of creature.
+"""
 function creature_combine_bubble(bubble::String, creature::String)
     creature ∉ keys(CREATURES) && return throw(ArgumentError("Creature does not exist"))
     creature_figure = CREATURES[creature]
     return "$bubble $creature_figure"
 end
 
-function message_wrap(msg)
+"""
+    message_wrap(msg::String)
+
+Wraps the message into a compact format for each line so it can be used for function `bubble`.
+"""
+function message_wrap(msg::String)
     tmp = split(msg)
     full_message = []
     while !isempty(tmp)
@@ -340,6 +355,11 @@ function message_wrap(msg)
     return full_message
 end
 
+"""
+    cowsay(s::String, creature="cow")
+
+The infamous cowsay will be printed using this function
+"""
 function cowsay(s::String, creature="cow")
     println(creature_combine_bubble(bubble(message_wrap(s)), creature))
 end
