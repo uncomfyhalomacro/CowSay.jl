@@ -7,12 +7,8 @@ makedocs(;
     modules=[CowSay],
     authors="uncomfyhalomacro",
     repo="https://github.com/uncomfyhalomacro/CowSay.jl/blob/{commit}{path}#{line}",
-    sitename="CowSay",
-    format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://github.com/uncomfyhalomacro/CowSay.jl",
-        assets=String[],
-    ),
+    sitename="CowSay.jl",
+    format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
     ],
