@@ -342,31 +342,28 @@ function message_wrap(msg::String)
     lines = split(msg)
     msg = []
     full_message = []
-    for line in lines
-        while length(line) > 35
-            tmp = line[begin:34]
-            line = line[35:end]
-            if length(join(msg, " ")) <= 35
-                push!(msg, tmp, line)
-            else
-                push!(msg, line)
-                push!(full_message, join(msg, " "))
-                # push!(full_message, line)
-                msg = []
-            end
+    while !isempty(lines)
+      line = popfirst!(lines)
+      while length(line) > 35
+        s1 = SubString(line, 1:34)
+        line = SubString(line, 35)
+        if length(join(msg, " ")) <= 35 
+          push!(msg, s1)
         end
-        if length(join(msg, " ")) <= 35
-            push!(msg, line)
-            if line == lines[end]
-                full_message[end] = string(full_message[end], " $line")
-            end
-        else
-            push!(msg, line)
-            push!(full_message, join(msg, " "))
-            msg = []
-        end
+        push!(full_message, join(msg, " "))
+        msg = [line]
+      end
+      if length(join(msg, " ")) <= 35 
+        push!(msg, line)
+      else
+        push!(full_message, join(msg, " "))
+        msg = [line]
+      end
     end
-
+    if !isempty(msg)
+      # full_message[end] = string(full_message[end], " ", join(msg, " "))
+      push!(full_message, join(msg, " "))
+    end
     return full_message
 end
 
