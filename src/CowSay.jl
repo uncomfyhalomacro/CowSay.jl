@@ -284,7 +284,7 @@ const CREATURES = Dict(
          (|     | )
         /'\_   _/`\
         \___)=(___/
-    """
+    """,
 )
 
 
@@ -295,7 +295,7 @@ Creates a message bubble.
 """
 function bubble(msg_v::Vector)
     result = []
-    longest_string = maximum(msg_v .|> length)
+    longest_string = maximum(length.(msg_v))
     if length(msg_v) == 1
         result = " $(strip(msg_v[1])) "
         dashes = length(result) - 4 ≤ 0 ? "\b---" : "-"^(length(result) - 2)
@@ -339,22 +339,34 @@ end
 Wraps the message into a compact format for each line so it can be used for function `bubble`.
 """
 function message_wrap(msg::String)
-    tmp = split(msg)
+    lines = split(msg)
+    msg = []
     full_message = []
-    msg_v = []
-    while !isempty(tmp)
-        if length(join(msg_v, " ")) <= 35
-            push!(msg_v, popfirst!(tmp))
-        else
-            push!(full_message, join(msg_v, " "))
-            if length(join(tmp, " ")) <= 35
-                push!(full_message, join(tmp, " "))
-                break
+    for line in lines
+        while length(line) > 35
+            tmp = line[begin:34]
+            line = line[35:end]
+            if length(join(msg, " ")) <= 35
+                push!(msg, tmp, line)
+            else
+                push!(msg, line)
+                push!(full_message, join(msg, " "))
+                # push!(full_message, line)
+                msg = []
             end
-            msg_v = []
         end
-
+        if length(join(msg, " ")) <= 35
+            push!(msg, line)
+            if line == lines[end]
+                full_message[end] = string(full_message[end], " $line")
+            end
+        else
+            push!(msg, line)
+            push!(full_message, join(msg, " "))
+            msg = []
+        end
     end
+
     return full_message
 end
 
@@ -363,7 +375,10 @@ end
 
 The infamous cowsay will be printed using this function
 """
-function cowsay(s::String, creature = "cow")
-    println(creature_combine_bubble(bubble(message_wrap(s)), creature))
+function cowsay(s::String, creature="cow")
+    if isempty(s)
+        throw(ArgumentError("Pass something meaningful to cowsay"))
+    end
+    return println(creature_combine_bubble(bubble(message_wrap(s)), creature))
 end
 end
